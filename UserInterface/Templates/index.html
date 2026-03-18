@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pokémon Selector</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="pokedex-container">
+        <div class="pokedex-header">
+            <h1>Pokémon Selector</h1>
+            <p>Drop a Pokémon image inside the Pokéball and see the magic!</p>
+        </div>
+
+        <div class="upload-area">
+            <!-- Wrap everything in a form -->
+            <form action="/output" method="POST" enctype="multipart/form-data">
+                <div class="pokeball">
+                    <div class="pokeball-top"></div>
+                    <div class="pokeball-line"></div>
+                    <div class="pokeball-button">
+                    <input type="file" id="pokemon_image" name="pokemon_image" accept="image/*" required />                        <label for="pokemon_image">Choose Pokémon</label>
+                    </div>
+                </div>
+
+                <div class="preview">
+                    <img id="previewImg" src="#" alt="Pokémon Preview" style="display:none;">
+                </div>
+
+                <button type="submit" id="predictBtn">Predict Pokémon</button>
+            </form>
+        </div>
+
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
