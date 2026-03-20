@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pokemon Card</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="card" id="card">
+
+        <!-- INNER FRAME -->
+        <div class="card-frame"></div>
+
+        <!-- IMAGE -->
+        <div class="img-box">
+            <img src="{{ url_for('static', filename='uploads/' + image) }}" alt="pokemon">
+        </div>
+
+        <!-- NAME -->
+        <h2>{{ data['Name'] }}</h2>
+
+        <!-- TYPE -->
+        <p class="type">{{ data.get('Type', 'Normal') }}</p>
+
+      <div class="stats">
+
+    <div class="stat">
+        <span>HP</span>
+        <div class="bar"><div class="fill" data-value="{{ data.get('HP', 0) }}"></div></div>
+    </div>
+
+    <div class="stat">
+        <span>Attack</span>
+        <div class="bar"><div class="fill" data-value="{{ data.get('Attack', 0) }}"></div></div>
+    </div>
+
+    <div class="stat">
+        <span>Defense</span>
+        <div class="bar"><div class="fill" data-value="{{ data.get('Defense', 0) }}"></div></div>
+    </div>
+
+    <div class="stat">
+        <span>Speed</span>
+        <div class="bar"><div class="fill" data-value="{{ data.get('Speed', 0) }}"></div></div>
+    </div>
+
+</div>
+
+    </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='scripts.js') }}"></script>
+
+</body>
+</html>
