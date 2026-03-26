@@ -11,9 +11,8 @@ app = Flask(__name__)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-model_path = os.path.join(BASE_DIR, "pokedex_model.h5")
-model = load_model(model_path,compile=False)
-
+model_path = "pokedex_model.h5"
+model = load_model(model_path, compile=False)
 labels_path = os.path.join(BASE_DIR, "labels.json")
 with open(labels_path, "r") as f:
     dataset = json.load(f)
