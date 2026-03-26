@@ -6,6 +6,7 @@ import numpy as np
 import json
 from bckgrd import backgrdrmv
 
+os.environ["TF_USE_LEGACY_KERAS"] = "1"
 app = Flask(__name__)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
