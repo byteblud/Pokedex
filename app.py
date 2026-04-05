@@ -17,10 +17,10 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # =========================
 # 🔥 LOAD MODEL (WITH DEBUG)
 # =========================
-model_path = os.path.join(BASE_DIR, "model.keras")
+model_path = os.path.join(BASE_DIR, "pokedex_model.keras")
 
 try:
-    model = load_model(model_path, compile=False)
+    model = load_model(model_path, compile=False,safe_mode=False)
     print("✅ Model loaded successfully")
 except Exception as e:
     print("❌ Model loading failed:", e)
