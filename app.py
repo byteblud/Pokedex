@@ -17,7 +17,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # =========================
 # 🔥 LOAD MODEL (WITH DEBUG)
 # =========================
-model_path = os.path.join(BASE_DIR, "pokedex_model.keras")
+model_path =  "pokedex_model.keras"
 
 try:
     model = load_model(model_path, compile=False,safe_mode=False)
