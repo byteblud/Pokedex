@@ -12,11 +12,7 @@ from bckgrd import backgrdrmv
 
 app = Flask(__name__)
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# =========================
-# 🔥 LOAD MODEL (WITH DEBUG)
-# =========================
 model_path =  "model.keras"
 
 try:
@@ -27,10 +23,7 @@ except Exception as e:
     model = None
 
 
-# =========================
-# 🔥 LOAD LABELS (WITH DEBUG)
-# =========================
-labels_path = os.path.join(BASE_DIR, "labels.json")
+labels_path =  "labels.json"
 
 try:
     with open(labels_path, "r") as f:
@@ -43,10 +36,8 @@ except Exception as e:
 index_to_name = {v: k for k, v in dataset.items()}
 
 
-# =========================
-# 🔥 LOAD CSV (WITH DEBUG)
-# =========================
-csv_path = os.path.join(BASE_DIR, "final_cleaned.csv")
+
+csv_path = "final_cleaned.csv"
 
 try:
     df = pd.read_csv(csv_path)
