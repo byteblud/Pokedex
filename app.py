@@ -1,6 +1,5 @@
 import os
-
-# ✅ Fix Keras compatibility (VERY IMPORTANT)
+import uuid
 os.environ["TF_USE_LEGACY_KERAS"] = "1"
 
 import pandas as pd
@@ -12,51 +11,26 @@ from bckgrd import backgrdrmv
 
 app = Flask(__name__)
 
+# ✅ FIX
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-model_path =  "model.keras"
+# Load model
+model = load_model("model.keras")
 
-try:
-    model = load_model(model_path)
-    print("✅ Model loaded successfully")
-except Exception as e:
-    print("❌ Model loading failed:", e)
-    model = None
-
-
-labels_path =  "labels.json"
-
-try:
-    with open(labels_path, "r") as f:
-        dataset = json.load(f)
-    print("✅ Labels loaded successfully")
-except Exception as e:
-    print("❌ Labels loading failed:", e)
-    dataset = {}
+# Load labels
+with open("labels.json", "r") as f:
+    dataset = json.load(f)
 
 index_to_name = {v: k for k, v in dataset.items()}
 
+# Load CSV
+df = pd.read_csv("final_cleaned.csv")
 
-
-csv_path = "final_cleaned.csv"
-
-try:
-    df = pd.read_csv(csv_path)
-    print("✅ CSV loaded successfully")
-except Exception as e:
-    print("❌ CSV loading failed:", e)
-    df = pd.DataFrame()
-
-
-# =========================
-# 📁 UPLOAD FOLDER
-# =========================
+# Upload folder
 UPLOAD_FOLDER = os.path.join(BASE_DIR, "static", "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 
-# =========================
-# 🌐 ROUTES
-# =========================
 @app.route("/")
 def enter():
     return render_template("index.html")
@@ -64,34 +38,34 @@ def enter():
 
 @app.route("/output", methods=["POST"])
 def out():
-    if model is None:
-        return "Model not loaded. Check logs."
-
     file = request.files.get("pokemon_image")
 
     if not file or file.filename == "":
         return "No file uploaded"
 
-    filepath = os.path.join(UPLOAD_FOLDER, file.filename)
+    # ✅ unique filename
+    filename = str(uuid.uuid4()) + "_" + file.filename
+    filepath = os.path.join(UPLOAD_FOLDER, filename)
     file.save(filepath)
 
-    try:
-        img = backgrdrmv(filepath)
-    except Exception as e:
-        return f"Image processing error: {e}"
+    # Image preprocessing
+    img = backgrdrmv(filepath)
 
-    try:
-        prediction = model.predict(img)
-        predict = np.argmax(prediction)
-    except Exception as e:
-        return f"Prediction error: {e}"
+    img = np.array(img)
+    if len(img.shape) == 3:
+        img = np.expand_dims(img, axis=0)
+
+    # Prediction
+    prediction = model.predict(img)
+    predict = np.argmax(prediction)
+
+    print("Prediction:", prediction)
 
     predicted_name = index_to_name.get(predict, "Unknown")
 
-    try:
-        row = df[df['Name'].str.lower() == predicted_name.lower()]
-    except Exception as e:
-        return f"CSV processing error: {e}"
+    # CSV match
+    df['Name'] = df['Name'].astype(str)
+    row = df[df['Name'].str.lower().str.strip() == predicted_name.lower().strip()]
 
     if not row.empty:
         pokemon_data = row.iloc[0].to_dict()
@@ -106,13 +80,10 @@ def out():
 
     return render_template(
         "indexs.html",
-        image=file.filename,
+        image=filename,
         data=pokemon_data
     )
 
 
-# =========================
-# 🚀 RUN APP (for local only)
-# =========================
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
+    app.run(debug=True)
