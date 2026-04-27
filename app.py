@@ -1,5 +1,7 @@
 import os
 import uuid
+
+# Fix Keras compatibility
 os.environ["TF_USE_LEGACY_KERAS"] = "1"
 
 import pandas as pd
@@ -11,20 +13,25 @@ from bckgrd import backgrdrmv
 
 app = Flask(__name__)
 
-# ✅ FIX
+# Base directory
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+# ✅ FIX PATHS (important for Render)
+model_path = os.path.join(BASE_DIR, "model.h5")   # 🔥 change to .h5
+labels_path = os.path.join(BASE_DIR, "labels.json")
+csv_path = os.path.join(BASE_DIR, "final_cleaned.csv")
+
 # Load model
-model = load_model("model.keras")
+model = load_model(model_path)
 
 # Load labels
-with open("labels.json", "r") as f:
+with open(labels_path, "r") as f:
     dataset = json.load(f)
 
 index_to_name = {v: k for k, v in dataset.items()}
 
 # Load CSV
-df = pd.read_csv("final_cleaned.csv")
+df = pd.read_csv(csv_path)
 
 # Upload folder
 UPLOAD_FOLDER = os.path.join(BASE_DIR, "static", "uploads")
@@ -43,23 +50,21 @@ def out():
     if not file or file.filename == "":
         return "No file uploaded"
 
-    # ✅ unique filename
+    # Unique filename
     filename = str(uuid.uuid4()) + "_" + file.filename
     filepath = os.path.join(UPLOAD_FOLDER, filename)
     file.save(filepath)
 
     # Image preprocessing
     img = backgrdrmv(filepath)
-
     img = np.array(img)
+
     if len(img.shape) == 3:
         img = np.expand_dims(img, axis=0)
 
     # Prediction
     prediction = model.predict(img)
     predict = np.argmax(prediction)
-
-    print("Prediction:", prediction)
 
     predicted_name = index_to_name.get(predict, "Unknown")
 
@@ -85,5 +90,7 @@ def out():
     )
 
 
+# ✅ IMPORTANT FOR RENDER
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
