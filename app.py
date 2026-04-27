@@ -2,7 +2,7 @@ import os
 import uuid
 
 # Fix Keras compatibility
-os.environ["TF_USE_LEGACY_KERAS"] = "1"
+
 
 import pandas as pd
 from flask import Flask, render_template, request
@@ -17,7 +17,7 @@ app = Flask(__name__)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # ✅ FIX PATHS (important for Render)
-model_path = os.path.join(BASE_DIR, "pokedex_model.h5")   # 🔥 change to .h5
+model_path = os.path.join(BASE_DIR, "model.keras")   # 🔥 change to .h5
 labels_path = os.path.join(BASE_DIR, "labels.json")
 csv_path = os.path.join(BASE_DIR, "final_cleaned.csv")
 
