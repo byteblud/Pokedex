@@ -17,7 +17,7 @@ app = Flask(__name__)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # ✅ FIX PATHS (important for Render)
-model_path = os.path.join(BASE_DIR, "model.h5")   # 🔥 change to .h5
+model_path = os.path.join(BASE_DIR, "pokedex_model.h5")   # 🔥 change to .h5
 labels_path = os.path.join(BASE_DIR, "labels.json")
 csv_path = os.path.join(BASE_DIR, "final_cleaned.csv")
 
