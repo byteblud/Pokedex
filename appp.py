@@ -237,7 +237,7 @@ section[data-testid="stSidebar"]{
 # =========================================================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-model_path = os.path.join(BASE_DIR, "pokedex_model.h5")
+model_path = os.path.join(BASE_DIR, "model.keras")
 labels_path = os.path.join(BASE_DIR, "labels.json")
 csv_path = os.path.join(BASE_DIR, "final_cleaned.csv")
 
@@ -245,27 +245,9 @@ csv_path = os.path.join(BASE_DIR, "final_cleaned.csv")
 # LOAD MODEL
 # =========================================================
 
-from keras.layers import DepthwiseConv2D
-
-class FixedDepthwiseConv2D(DepthwiseConv2D):
-
-    def __init__(self, *args, **kwargs):
-
-        # Remove unsupported old arguments
-        kwargs.pop("groups", None)
-        kwargs.pop("kernel_initializer", None)
-        kwargs.pop("kernel_regularizer", None)
-        kwargs.pop("kernel_constraint", None)
-
-        super().__init__(*args, **kwargs)
-
-
 model = tf.keras.models.load_model(
     model_path,
-    compile=False,
-    custom_objects={
-        "DepthwiseConv2D": FixedDepthwiseConv2D
-    }
+    compile=False
 )
 
 # =========================================================
