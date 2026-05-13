@@ -244,7 +244,7 @@ csv_path = os.path.join(BASE_DIR, "final_cleaned.csv")
 # =========================================================
 # LOAD MODEL
 # =========================================================
-model = load_model(model_path)
+model = load_model(model_path, compile=False)
 
 # =========================================================
 # LOAD LABELS
