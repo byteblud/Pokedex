@@ -240,16 +240,30 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 model_path = os.path.join(BASE_DIR, "model.keras")
 labels_path = os.path.join(BASE_DIR, "labels.json")
 csv_path = os.path.join(BASE_DIR, "final_cleaned.csv")
-
 # =========================================================
 # LOAD MODEL
 # =========================================================
 
+from keras.layers import DepthwiseConv2D
+
+class FixedDepthwiseConv2D(DepthwiseConv2D):
+
+    def __init__(self, *args, **kwargs):
+
+        kwargs.pop("groups", None)
+
+        super().__init__(*args, **kwargs)
+
+
 model = tf.keras.models.load_model(
     model_path,
-    compile=False
+    compile=False,
+    safe_mode=False,
+    custom_objects={
+        "DepthwiseConv2D": FixedDepthwiseConv2D,
+        "FixedDepthwiseConv2D": FixedDepthwiseConv2D
+    }
 )
-
 # =========================================================
 # LOAD LABELS
 # =========================================================
