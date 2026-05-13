@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 from PIL import Image
-from tensorflow.keras.models import load_model
+import tensorflow as tf
 from bckgrd import backgrdrmv
 
 # =========================================================
@@ -244,7 +244,11 @@ csv_path = os.path.join(BASE_DIR, "final_cleaned.csv")
 # =========================================================
 # LOAD MODEL
 # =========================================================
-model = load_model(model_path, compile=False)
+model = tf.keras.models.load_model(
+    model_path,
+    compile=False,
+    safe_mode=False
+)
 
 # =========================================================
 # LOAD LABELS
