@@ -256,13 +256,8 @@ class FixedDepthwiseConv2D(DepthwiseConv2D):
 
 
 model = tf.keras.models.load_model(
-    model_path,
-    compile=False,
-    safe_mode=False,
-    custom_objects={
-        "DepthwiseConv2D": FixedDepthwiseConv2D,
-        "FixedDepthwiseConv2D": FixedDepthwiseConv2D
-    }
+    "pokedex_model.h5",
+    compile=False
 )
 # =========================================================
 # LOAD LABELS
