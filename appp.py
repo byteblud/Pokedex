@@ -244,10 +244,28 @@ csv_path = os.path.join(BASE_DIR, "final_cleaned.csv")
 # =========================================================
 # LOAD MODEL
 # =========================================================
+
+from keras.layers import DepthwiseConv2D
+
+class FixedDepthwiseConv2D(DepthwiseConv2D):
+
+    def __init__(self, *args, **kwargs):
+
+        # Remove unsupported old arguments
+        kwargs.pop("groups", None)
+        kwargs.pop("kernel_initializer", None)
+        kwargs.pop("kernel_regularizer", None)
+        kwargs.pop("kernel_constraint", None)
+
+        super().__init__(*args, **kwargs)
+
+
 model = tf.keras.models.load_model(
     model_path,
     compile=False,
-    safe_mode=False
+    custom_objects={
+        "DepthwiseConv2D": FixedDepthwiseConv2D
+    }
 )
 
 # =========================================================
