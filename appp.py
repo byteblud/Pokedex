@@ -244,28 +244,41 @@ csv_path = os.path.join(BASE_DIR, "final_cleaned.csv")
 # LOAD MODEL
 # =========================================================
 
-from keras.layers import DepthwiseConv2D
+from tensorflow.keras.applications import MobileNetV2
+from tensorflow.keras.layers import Dense, GlobalAveragePooling2D, Dropout
+from tensorflow.keras.models import Model
 
-class FixedDepthwiseConv2D(DepthwiseConv2D):
-
-    def __init__(self, *args, **kwargs):
-
-        kwargs.pop("groups", None)
-
-        super().__init__(*args, **kwargs)
-
-
-model = tf.keras.models.load_model(
-    "pokedex_model.h5",
-    compile=False
-)
-# =========================================================
-# LOAD LABELS
-# =========================================================
+# Load labels first to get number of classes
 with open(labels_path, "r") as f:
     dataset = json.load(f)
 
 index_to_name = {v: k for k, v in dataset.items()}
+
+NUM_CLASSES = len(dataset)
+
+# Create MobileNetV2 architecture
+base_model = MobileNetV2(
+    weights='imagenet',
+    include_top=False,
+    input_shape=(128, 128, 3)
+)
+
+base_model.trainable = False
+
+x = base_model.output
+x = GlobalAveragePooling2D()(x)
+x = Dropout(0.3)(x)
+
+predictions = Dense(NUM_CLASSES, activation='softmax')(x)
+
+model = Model(
+    inputs=base_model.input,
+    outputs=predictions
+)
+
+# Load weights
+model.load_weights("pokedex_model.h5")
+
 
 # =========================================================
 # LOAD CSV
